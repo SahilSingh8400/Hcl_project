@@ -1,6 +1,6 @@
-{"_id":"4692b864-242d-4b67-bf8e-52ffb5f7b0ea","name":"Annual Leave","days_allowed":21,"carry_forward":10,"description":"Yearly paid leave","created_at":"2026-10-28T06:52:20.314Z"}
 {"_id":"0b34794f-1cf8-43b1-9894-15d7d3ff4f70","name":"Sick Leave","days_allowed":12,"carry_forward":0,"description":"Medical sick leave","created_at":"2026-10-28T06:52:20.314Z"}
 {"_id":"1868ac49-7321-4cf1-82e5-813d0df36ab0","name":"Casual Leave","days_allowed":7,"carry_forward":0,"description":"Casual personal leave","created_at":"2026-10-28T06:52:20.314Z"}
+{"_id":"4692b864-242d-4b67-bf8e-52ffb5f7b0ea","name":"Annual Leave","days_allowed":21,"carry_forward":10,"description":"Yearly paid leave","created_at":"2026-10-28T06:52:20.314Z"}
 {"_id":"7512f1b6-5ae8-4771-bbc7-4064f5207bb1","name":"Maternity Leave","days_allowed":180,"carry_forward":0,"description":"Maternity benefit leave","created_at":"2026-10-28T06:52:20.314Z"}
-{"_id":"d4368722-846b-440a-92c4-bfefee524a96","name":"Paternity Leave","days_allowed":15,"carry_forward":0,"description":"Paternity leave","created_at":"2026-10-28T06:52:20.314Z"}
 {"_id":"9f2f079f-dcaa-483f-8915-5b939af4a55b","name":"Compensatory Off","days_allowed":10,"carry_forward":5,"description":"Comp off for overtime work","created_at":"2026-10-28T06:52:20.314Z"}
+{"_id":"d4368722-846b-440a-92c4-bfefee524a96","name":"Paternity Leave","days_allowed":15,"carry_forward":0,"description":"Paternity leave","created_at":"2026-10-28T06:52:20.314Z"}

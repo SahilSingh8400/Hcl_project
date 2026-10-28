@@ -1,1 +1,1 @@
-{"$$indexCreated":{"fieldName":"employee_id"}}
+{"$$indexCreated":{"fieldName":"employee_id","unique":false,"sparse":false}}
