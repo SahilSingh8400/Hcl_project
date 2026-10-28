@@ -121,7 +121,7 @@ export default function Layout() {
             </div>
             <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center cursor-pointer" onClick={() => navigate('/profile')}>
               <span className="text-blue-600 font-semibold text-sm">
-                {employee ? `${employee.first_name[0]}${employee.last_name[0]}` : '?'}
+                {employee ? `${employee.first_name?.[0] || 'E'}${employee.last_name?.[0] || ''}` : (user?.email?.[0]?.toUpperCase() || '?')}
               </span>
             </div>
           </div>

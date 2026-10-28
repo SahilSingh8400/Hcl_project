@@ -6,6 +6,13 @@ import { Plus, Search, Filter, Edit, Trash2, Eye, Users } from 'lucide-react';
 import Modal from '../components/Modal';
 
 const STATUS_BADGE = { active: 'badge-green', inactive: 'badge-red', 'on-leave': 'badge-yellow' };
+const GRADE_BADGE = {
+  L1: 'bg-slate-100 text-slate-700 border border-slate-200',
+  L2: 'bg-blue-50 text-blue-700 border border-blue-200',
+  L3: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  L4: 'bg-purple-50 text-purple-700 border border-purple-200',
+  L5: 'bg-amber-50 text-amber-800 border border-amber-200'
+};
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
@@ -13,18 +20,35 @@ export default function Employees() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterDept, setFilterDept] = useState('');
-  const [filterStatus, setFilterStatus] = useState('active');
+  const [filterGrade, setFilterGrade] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [editEmp, setEditEmp] = useState(null);
   const navigate = useNavigate();
 
   const fetchEmployees = async () => {
+    setLoading(true);
     try {
-      const params = new URLSearchParams({ status: filterStatus });
+      const params = new URLSearchParams({ page, limit: pageSize });
+      if (filterStatus) params.append('status', filterStatus);
       if (filterDept) params.append('department', filterDept);
+      if (filterGrade) params.append('grade', filterGrade);
       if (search) params.append('search', search);
+
       const res = await api.get(`/employees?${params}`);
-      setEmployees(res.data);
+      if (res.data && res.data.data) {
+        setEmployees(res.data.data);
+        setTotalCount(res.data.total);
+        setTotalPages(res.data.totalPages);
+      } else if (Array.isArray(res.data)) {
+        setEmployees(res.data);
+        setTotalCount(res.data.length);
+        setTotalPages(1);
+      }
     } catch { toast.error('Failed to load employees'); }
     finally { setLoading(false); }
   };
@@ -33,7 +57,13 @@ export default function Employees() {
     api.get('/departments').then(r => setDepartments(r.data));
   }, []);
 
-  useEffect(() => { fetchEmployees(); }, [search, filterDept, filterStatus]);
+  useEffect(() => {
+    setPage(1);
+  }, [search, filterDept, filterGrade, filterStatus, pageSize]);
+
+  useEffect(() => {
+    fetchEmployees();
+  }, [page, pageSize, search, filterDept, filterGrade, filterStatus]);
 
   const handleDelete = async (id) => {
     if (!confirm('Deactivate this employee?')) return;
@@ -44,25 +74,43 @@ export default function Employees() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Employees</h1><p className="text-gray-500 text-sm mt-1">{employees.length} employees found</p></div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Employees Directory</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {totalCount.toLocaleString()} employee records across 10 departments (3-Year Dataset)
+          </p>
+        </div>
         <button onClick={() => { setEditEmp(null); setShowModal(true); }} className="btn-primary"><Plus size={16} />Add Employee</button>
       </div>
 
       {/* Filters */}
       <div className="card py-4">
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-48">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, email, code..." className="input pl-9" />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, email, code (EMP0001)..." className="input pl-9" />
           </div>
           <select value={filterDept} onChange={e => setFilterDept(e.target.value)} className="input w-auto">
-            <option value="">All Departments</option>
+            <option value="">All 10 Departments</option>
             {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
           </select>
+          <select value={filterGrade} onChange={e => setFilterGrade(e.target.value)} className="input w-auto">
+            <option value="">All Grades (L1 - L5)</option>
+            <option value="L1">L1 - Entry</option>
+            <option value="L2">L2 - Mid</option>
+            <option value="L3">L3 - Senior</option>
+            <option value="L4">L4 - Lead / Mgr</option>
+            <option value="L5">L5 - Director</option>
+          </select>
           <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="input w-auto">
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="">All</option>
+            <option value="">All Employment Status</option>
+            <option value="active">Active (88%)</option>
+            <option value="inactive">Attrited (12%)</option>
+          </select>
+          <select value={pageSize} onChange={e => setPageSize(Number(e.target.value))} className="input w-auto">
+            <option value="25">25 / page</option>
+            <option value="50">50 / page</option>
+            <option value="100">100 / page</option>
           </select>
         </div>
       </div>
@@ -76,24 +124,26 @@ export default function Employees() {
                 <th className="table-th">Employee</th>
                 <th className="table-th">Code</th>
                 <th className="table-th">Department</th>
-                <th className="table-th">Designation</th>
-                <th className="table-th">Date Joined</th>
-                <th className="table-th">Salary</th>
-                <th className="table-th">Status</th>
+                <th className="table-th">Grade</th>
+                <th className="table-th">Performance</th>
+                <th className="table-th">Leaves</th>
+                <th className="table-th">Join Date</th>
+                <th className="table-th">Monthly Salary</th>
+                <th className="table-th">Attrition</th>
                 <th className="table-th">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} className="text-center py-12 text-gray-400">Loading...</td></tr>
+                <tr><td colSpan={10} className="text-center py-12 text-gray-400">Loading records...</td></tr>
               ) : employees.length === 0 ? (
-                <tr><td colSpan={8} className="text-center py-12 text-gray-400"><Users size={40} className="mx-auto mb-3 opacity-30" /><p>No employees found</p></td></tr>
+                <tr><td colSpan={10} className="text-center py-12 text-gray-400"><Users size={40} className="mx-auto mb-3 opacity-30" /><p>No employees found</p></td></tr>
               ) : employees.map(emp => (
                 <tr key={emp._id} className="table-tr">
                   <td className="table-td">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-blue-700 font-semibold text-xs">{emp.first_name[0]}{emp.last_name[0]}</span>
+                        <span className="text-blue-700 font-semibold text-xs">{emp.first_name?.[0]}{emp.last_name?.[0]}</span>
                       </div>
                       <div>
                         <div className="font-medium text-gray-900">{emp.first_name} {emp.last_name}</div>
@@ -101,12 +151,27 @@ export default function Employees() {
                       </div>
                     </div>
                   </td>
-                  <td className="table-td font-mono text-xs">{emp.employee_code}</td>
+                  <td className="table-td font-mono text-xs font-semibold text-gray-700">{emp.employee_code}</td>
                   <td className="table-td">{emp.department_name || '—'}</td>
-                  <td className="table-td">{emp.designation}</td>
-                  <td className="table-td">{emp.date_joined}</td>
-                  <td className="table-td font-medium">₹{(emp.salary||0).toLocaleString()}</td>
-                  <td className="table-td"><span className={`badge ${STATUS_BADGE[emp.status]||'badge-gray'}`}>{emp.status}</span></td>
+                  <td className="table-td">
+                    <span className={`px-2 py-0.5 rounded text-xs font-bold ${GRADE_BADGE[emp.grade] || 'bg-gray-100 text-gray-700'}`}>
+                      {emp.grade || 'L2'}
+                    </span>
+                  </td>
+                  <td className="table-td">
+                    <div className="flex items-center gap-1">
+                      <span className="font-semibold text-xs text-gray-800">{emp.performance_score ? Number(emp.performance_score).toFixed(1) : '3.5'}</span>
+                      <span className="text-xs text-yellow-500">★</span>
+                    </div>
+                  </td>
+                  <td className="table-td text-xs text-gray-600">{emp.leave_days_taken !== undefined ? `${emp.leave_days_taken} d` : '15 d'}</td>
+                  <td className="table-td text-xs text-gray-500">{emp.date_joined || '2025-01-01'}</td>
+                  <td className="table-td font-medium text-xs">₹{(emp.salary || emp.monthly_salary_inr || 0).toLocaleString()}</td>
+                  <td className="table-td">
+                    <span className={`badge ${emp.attrition === 1 || emp.status === 'inactive' ? 'badge-red' : 'badge-green'}`}>
+                      {emp.attrition === 1 || emp.status === 'inactive' ? 'Attrited' : 'Active'}
+                    </span>
+                  </td>
                   <td className="table-td">
                     <div className="flex items-center gap-1">
                       <button onClick={() => navigate(`/employees/${emp._id}`)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg" title="View"><Eye size={15} /></button>
@@ -118,6 +183,32 @@ export default function Employees() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination controls */}
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-100">
+          <div className="text-xs text-gray-500">
+            Showing <strong className="text-gray-900">{totalCount > 0 ? (page - 1) * pageSize + 1 : 0}</strong> to <strong className="text-gray-900">{Math.min(page * pageSize, totalCount)}</strong> of <strong className="text-gray-900">{totalCount.toLocaleString()}</strong> records
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <span className="text-xs text-gray-600 font-medium px-2">
+              Page {page} of {totalPages || 1}
+            </span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 

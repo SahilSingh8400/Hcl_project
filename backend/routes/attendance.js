@@ -22,12 +22,30 @@ router.get('/', authenticate, async (req, res) => {
       records = records.filter(r => r.date?.startsWith(year));
     }
 
+    // Preload depts and emps for fast batch enrichment
+    const [allDepts, allEmps] = await Promise.all([
+      db.departments.find({}),
+      db.employees.find({})
+    ]);
+    const deptMap = {};
+    allDepts.forEach(d => { deptMap[d._id] = d.name; });
+    const empMap = {};
+    allEmps.forEach(e => {
+      empMap[e._id] = e;
+      if (e.employee_code) empMap[e.employee_code] = e;
+    });
+
     // Enrich with employee info
-    const enriched = await Promise.all(records.slice(0, 500).map(async r => {
-      const emp = await db.employees.findOne({ _id: r.employee_id });
-      const dept = emp?.department_id ? await db.departments.findOne({ _id: emp.department_id }) : null;
-      return { ...r, employee_name: emp ? `${emp.first_name} ${emp.last_name}` : 'Unknown', employee_code: emp?.employee_code, department_name: dept?.name };
-    }));
+    const enriched = records.slice(0, 500).map(r => {
+      const emp = empMap[r.employee_id] || empMap[r.employee_code];
+      const deptName = emp?.department_id ? deptMap[emp.department_id] : (emp?.department_name || r.department_name);
+      return {
+        ...r,
+        employee_name: emp ? `${emp.first_name} ${emp.last_name}` : (r.employee_name || 'HCL Employee'),
+        employee_code: emp?.employee_code || r.employee_code || 'EMP',
+        department_name: deptName || 'General'
+      };
+    });
     res.json(enriched);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });

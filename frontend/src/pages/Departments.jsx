@@ -18,7 +18,9 @@ export default function Departments() {
   };
 
   useEffect(() => {
-    api.get('/employees?status=active').then(r => setEmployees(r.data));
+    api.get('/employees?status=active&limit=100').then(r => {
+      setEmployees(Array.isArray(r.data) ? r.data : (r.data.data || []));
+    }).catch(() => {});
     fetchDepts();
   }, []);
 

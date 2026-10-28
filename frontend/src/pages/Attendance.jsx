@@ -35,7 +35,11 @@ export default function Attendance() {
   };
 
   useEffect(() => {
-    if (isAdmin) api.get('/employees?status=active').then(r => setEmployees(r.data));
+    if (isAdmin) {
+      api.get('/employees?status=active&limit=100').then(r => {
+        setEmployees(Array.isArray(r.data) ? r.data : (r.data.data || []));
+      }).catch(() => {});
+    }
     fetchData();
   }, [filterMonth, filterYear, filterEmp]);
 

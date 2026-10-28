@@ -1,1 +1,2 @@
+{"_id":"a6b79cae-e6ea-4dd6-8abd-0d299372f7ec","employee_id":"87d269ca-bddd-4fda-a7a4-8f7efb36684a","leave_type_id":"1868ac49-7321-4cf1-82e5-813d0df36ab0","start_date":"2026-10-30","end_date":"2026-10-30","days":1,"reason":"festival","status":"approved","created_at":"2026-10-28T18:39:10.857Z","updated_at":"2026-10-28T18:41:08.955Z","approved_by":"6d7c99ac-e746-4145-b45d-18fe497e410a","approved_at":"2026-10-28T18:41:08.955Z"}
 {"$$indexCreated":{"fieldName":"employee_id","unique":false,"sparse":false}}

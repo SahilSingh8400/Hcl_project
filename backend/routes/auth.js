@@ -35,7 +35,8 @@ router.post('/login', async (req, res) => {
 router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await db.users.findOne({ _id: req.user.userId });
-    const employee = await db.employees.findOne({ _id: user.employee_id });
+    if (!user) return res.status(401).json({ error: 'User session expired, please login again' });
+    const employee = user.employee_id ? await db.employees.findOne({ _id: user.employee_id }) : null;
     const dept = employee?.department_id ? await db.departments.findOne({ _id: employee.department_id }) : null;
     const { password: _, ...safeUser } = user;
     res.json({ user: safeUser, employee: employee ? { ...employee, department_name: dept?.name } : null });

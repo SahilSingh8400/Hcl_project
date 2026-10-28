@@ -52,18 +52,36 @@ async function initializeDatabase() {
 async function seedData() {
   const now = new Date().toISOString();
   
-  // Departments
+  // 10 Departments aligning with dataset.csv
   const depts = [
-    { _id: uuidv4(), name: 'Human Resources', description: 'HR & People Management', budget: 5000000, created_at: now },
-    { _id: uuidv4(), name: 'Engineering', description: 'Software Development', budget: 20000000, created_at: now },
-    { _id: uuidv4(), name: 'Sales & Marketing', description: 'Sales and Marketing', budget: 10000000, created_at: now },
-    { _id: uuidv4(), name: 'Finance', description: 'Finance & Accounting', budget: 8000000, created_at: now },
-    { _id: uuidv4(), name: 'Operations', description: 'Business Operations', budget: 7000000, created_at: now },
-    { _id: uuidv4(), name: 'Customer Support', description: 'Customer Service', budget: 6000000, created_at: now },
+    { _id: uuidv4(), name: 'Sales', description: 'Enterprise and B2B Software Sales', budget: 15000000, created_at: now },
+    { _id: uuidv4(), name: 'Engineering', description: 'Software Development & Platform Engineering', budget: 35000000, created_at: now },
+    { _id: uuidv4(), name: 'Operations', description: 'Business & Infrastructure Operations', budget: 12000000, created_at: now },
+    { _id: uuidv4(), name: 'Marketing', description: 'Brand, Digital Marketing & Growth', budget: 14000000, created_at: now },
+    { _id: uuidv4(), name: 'HR', description: 'Human Resources & Talent Management', budget: 8000000, created_at: now },
+    { _id: uuidv4(), name: 'Finance', description: 'Finance, Accounts & Corporate Strategy', budget: 10000000, created_at: now },
+    { _id: uuidv4(), name: 'Customer Support', description: 'Customer Success & Technical Support', budget: 9000000, created_at: now },
+    { _id: uuidv4(), name: 'Product', description: 'Product Management & User Experience', budget: 16000000, created_at: now },
+    { _id: uuidv4(), name: 'Legal', description: 'Corporate Legal, Compliance & IP', budget: 7000000, created_at: now },
+    { _id: uuidv4(), name: 'IT', description: 'IT Systems, Cloud Infrastructure & Cybersecurity', budget: 18000000, created_at: now },
   ];
   await db.departments.insert(depts);
 
-  const hrDept = depts[0], engDept = depts[1];
+  const hrDept = depts.find(d => d.name === 'HR') || depts[4];
+  const engDept = depts.find(d => d.name === 'Engineering') || depts[1];
+
+  // Try to seed from dataset.csv if exists
+  const fs = require('fs');
+  const csvPath = fs.existsSync(path.join(__dirname, 'data', 'dataset.csv'))
+    ? path.join(__dirname, 'data', 'dataset.csv')
+    : path.join(__dirname, '..', 'dataset.csv');
+
+  if (fs.existsSync(csvPath)) {
+    console.log('Loading 5,000 employee records from dataset.csv...');
+    const { seedFullDataset } = require('./seed_dataset');
+    await seedFullDataset();
+    return;
+  }
 
   // Employees
   const employees = [

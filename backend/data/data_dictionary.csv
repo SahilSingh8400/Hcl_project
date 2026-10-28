@@ -1,0 +1,9 @@
+column_name,data_type,sample_value_1,sample_value_2,sample_value_3,nullable,description_fill_in
+emp_id,object/numeric,EMP0001,EMP0002,EMP0003,No,Unique identifier assigned sequentially to each employee record (EMP0001 to EMP5000).
+department,object/numeric,Sales,Sales,Engineering,No,The functional business department the employee belongs to across 10 distinct company departments.
+grade,object/numeric,L5,L2,L1,No,Job hierarchy and seniority band ranging from L1 (Junior/Entry Level) to L5 (Director/Leadership).
+join_date,object/numeric,2026-01-25,2024-12-17,2024-05-24,No,The official onboarding date of the employee formatted as YYYY-MM-DD spanning a 3-year hiring period (2024 to 2026).
+monthly_salary_inr,object/numeric,123614.0,40932.0,111603.0,No,Monthly gross compensation in Indian Rupees (INR) structured according to corporate grade salary bands.
+leave_days_taken,object/numeric,5,2,4,No,Total count of paid leave/vacation days utilized by the employee during the annual evaluation cycle (0-30 days).
+performance_score,object/numeric,2.7,3.9,4.0,No,Annual performance evaluation rating on a standard 1.0 to 5.0 scale following a normal distribution (mean ~3.5).
+attrition,object/numeric,0,0,0,No,Binary employment status indicator (0 = Currently Active Employee, 1 = Left/Attrited) maintaining an annual company attrition rate of 12%.

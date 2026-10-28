@@ -1,6 +1,10 @@
-{"_id":"2fd24f01-cb80-473e-a004-d81157c9b6b5","name":"Customer Support","description":"Customer Service","budget":6000000,"created_at":"2026-10-28T06:52:20.314Z"}
-{"_id":"3498906d-41cc-438b-99ac-df58b4badfed","name":"Sales & Marketing","description":"Sales and Marketing","budget":10000000,"created_at":"2026-10-28T06:52:20.314Z"}
-{"_id":"5ed62b68-de18-46da-88c5-f61c482ca2b7","name":"Finance","description":"Finance & Accounting","budget":8000000,"created_at":"2026-10-28T06:52:20.314Z"}
-{"_id":"8a13218f-08ac-41e4-99a7-614186a4d077","name":"Operations","description":"Business Operations","budget":7000000,"created_at":"2026-10-28T06:52:20.314Z"}
-{"_id":"dadb003b-3f6e-42f2-8d20-f1a5892bb673","name":"Human Resources","description":"HR & People Management","budget":5000000,"created_at":"2026-10-28T06:52:20.314Z","manager_id":"b56c2423-cade-402e-98c0-086c6f512a54"}
-{"_id":"f3c8e55d-d006-4f28-9aeb-0c56b28522c2","name":"Engineering","description":"Software Development","budget":20000000,"created_at":"2026-10-28T06:52:20.314Z"}
+{"_id":"1987c929-865d-456c-984a-d8ec2b6cebea","name":"Operations","description":"Business & Infrastructure Operations","budget":12000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"216e2852-4023-463f-bd7b-7148a0bc6eb4","name":"Finance","description":"Finance, Accounts & Corporate Strategy","budget":10000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"36acaa22-20bf-4b29-b0e1-e9356d3e71ca","name":"Marketing","description":"Brand, Digital Marketing & Growth","budget":14000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"36f49fa1-ac75-4bc9-bf63-37eef00738be","name":"Product","description":"Product Management & User Experience","budget":16000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"a06497c7-3455-4f18-b10e-2bf2dad5105a","name":"Legal","description":"Corporate Legal, Compliance & IP","budget":7000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"b25f3ede-fc42-45fd-8233-1011f6ea321c","name":"Customer Support","description":"Customer Success & Technical Support","budget":9000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"bd58f545-5c92-49a7-912d-61ab1acdaf4c","name":"IT","description":"IT Systems, Cloud Infrastructure & Cybersecurity","budget":18000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"c9887c8f-2904-4bb0-84a0-b4178b85ff0f","name":"Engineering","description":"Software Development & Platform Engineering","budget":35000000,"created_at":"2026-10-28T18:44:18.811Z"}
+{"_id":"c9c4e0c5-ed1e-45d3-95fb-a39ecc28c9d7","name":"HR","description":"Human Resources & Talent Management","budget":8000000,"created_at":"2026-10-28T18:44:18.811Z","manager_id":"82195f0b-36bf-4c69-8d01-ba58ee341177"}
+{"_id":"cc8e1ac1-e36d-4e04-9372-4d1137fd81c8","name":"Sales","description":"Enterprise and B2B Software Sales","budget":15000000,"created_at":"2026-10-28T18:44:18.811Z"}
