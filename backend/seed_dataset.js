@@ -115,7 +115,8 @@ async function seedFullDataset() {
     employees: Datastore.create({ filename: path.join(DATA_DIR, 'employees.db'), autoload: true }),
     departments: Datastore.create({ filename: path.join(DATA_DIR, 'departments.db'), autoload: true }),
     attendance: Datastore.create({ filename: path.join(DATA_DIR, 'attendance.db'), autoload: true }),
-    payroll: Datastore.create({ filename: path.join(DATA_DIR, 'payroll.db'), autoload: true })
+    payroll: Datastore.create({ filename: path.join(DATA_DIR, 'payroll.db'), autoload: true }),
+    performance: Datastore.create({ filename: path.join(DATA_DIR, 'performance.db'), autoload: true })
   };
 
   const csvPath = fs.existsSync(path.join(__dirname, 'data', 'dataset.csv'))
@@ -405,7 +406,104 @@ async function seedFullDataset() {
   await db.payroll.insert(payrollRecords);
   console.log(`Inserted ${payrollRecords.length} payroll records.`);
 
-  console.log('Database seeding with 5,000 employee records, attendance & payroll complete!');
+  // Clear and seed Performance Reviews
+  await db.performance.remove({}, { multi: true });
+  const perfReviews = [];
+
+  // 1. Rahul Sharma reviews
+  const rahulEmp = employeesToInsert.find(e => e.employee_code === 'EMP0002');
+  if (rahulEmp) {
+    perfReviews.push(
+      {
+        _id: uuidv4(),
+        employee_id: rahulEmp._id,
+        review_period: 'Q1 2026',
+        review_date: '2026-03-31',
+        overall_rating: 4.6,
+        technical_skills: 4.5,
+        communication: 4.8,
+        teamwork: 4.7,
+        leadership: 4.2,
+        punctuality: 4.6,
+        initiative: 4.7,
+        strengths: 'Outstanding performance closing Q1 enterprise pipeline; delivered 135% of quota. High customer trust and exceptional client relationship building.',
+        weaknesses: 'Continue developing structured cross-selling workflows with Engineering and Product teams.',
+        goals: 'Lead regional strategic enterprise accounts expansion and mentor junior sales associates.',
+        status: 'published',
+        created_at: '2026-03-31T10:00:00.000Z',
+        updated_at: now
+      },
+      {
+        _id: uuidv4(),
+        employee_id: rahulEmp._id,
+        review_period: 'Q4 2025',
+        review_date: '2025-12-22',
+        overall_rating: 4.3,
+        technical_skills: 4.2,
+        communication: 4.6,
+        teamwork: 4.4,
+        leadership: 4.0,
+        punctuality: 4.5,
+        initiative: 4.4,
+        strengths: 'Closed major enterprise software licenses before year-end. Excellent presentation skills and deal structuring.',
+        weaknesses: 'Tighten proposal turnaround time on competitive enterprise RFPs.',
+        goals: 'Standardize outreach cadence playbooks and spearhead bi-weekly solution demos.',
+        status: 'published',
+        created_at: '2025-12-22T10:00:00.000Z',
+        updated_at: now
+      },
+      {
+        _id: uuidv4(),
+        employee_id: rahulEmp._id,
+        review_period: 'Q3 2025',
+        review_date: '2025-09-30',
+        overall_rating: 4.1,
+        technical_skills: 4.0,
+        communication: 4.4,
+        teamwork: 4.2,
+        leadership: 3.8,
+        punctuality: 4.5,
+        initiative: 4.1,
+        strengths: 'Solid client discovery calls and disciplined CRM opportunity tracking.',
+        weaknesses: 'Deepen understanding of technical cloud deployment nuances to handle technical vetting earlier in the cycle.',
+        goals: 'Complete Enterprise Cloud Solutions enablement certification.',
+        status: 'published',
+        created_at: '2025-09-30T10:00:00.000Z',
+        updated_at: now
+      }
+    );
+  }
+
+  // 2. Reviews for sample active employees
+  for (const emp of sampleEmps.slice(0, 40)) {
+    if (emp.employee_code === 'EMP0002') continue;
+    const baseScore = emp.performance_score ? Number(emp.performance_score) : 4.0;
+    const score1 = Math.min(5, Math.max(2.5, Math.round(baseScore * 10) / 10));
+
+    perfReviews.push({
+      _id: uuidv4(),
+      employee_id: emp._id,
+      review_period: 'Q1 2026',
+      review_date: '2026-03-31',
+      overall_rating: score1,
+      technical_skills: Math.min(5, Math.max(2, Math.round((score1 + 0.1) * 10) / 10)),
+      communication: Math.min(5, Math.max(2, Math.round((score1 - 0.1) * 10) / 10)),
+      teamwork: Math.min(5, Math.max(2, Math.round((score1 + 0.2) * 10) / 10)),
+      leadership: Math.min(5, Math.max(2, Math.round((score1 - 0.2) * 10) / 10)),
+      punctuality: 4.5,
+      initiative: score1,
+      strengths: `Consistently meets and exceeds departmental expectations in ${emp.department_name}, demonstrating strong domain expertise.`,
+      weaknesses: 'Can take on higher cross-functional initiative across collaborative team initiatives.',
+      goals: `Advance leadership roadmap and target next grade promotion in ${emp.department_name}.`,
+      status: 'published',
+      created_at: '2026-03-31T09:00:00.000Z',
+      updated_at: now
+    });
+  }
+  await db.performance.insert(perfReviews);
+  console.log(`Inserted ${perfReviews.length} performance reviews.`);
+
+  console.log('Database seeding with 5,000 employee records, attendance, payroll & performance complete!');
 }
 
 if (require.main === module) {

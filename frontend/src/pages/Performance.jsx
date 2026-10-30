@@ -15,7 +15,7 @@ function RatingStars({ value, max = 5 }) {
 }
 
 export default function Performance() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, employee } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -38,7 +38,12 @@ export default function Performance() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Performance Reviews</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Performance Reviews</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {isAdmin ? 'View and manage all employee performance evaluations' : 'Your quarterly performance appraisals and skill ratings'}
+          </p>
+        </div>
         {isAdmin && <button onClick={() => { setEditReview(null); setShowModal(true); }} className="btn-primary"><Plus size={16} />New Review</button>}
       </div>
 
@@ -49,9 +54,9 @@ export default function Performance() {
           <div key={r._id} className="card hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h3 className="font-semibold text-gray-900">{r.employee_name}</h3>
-                <p className="text-xs text-gray-500">{r.designation} · {r.department_name}</p>
-                <p className="text-xs text-gray-400 mt-1">{r.review_period} · Reviewed by {r.reviewer_name}</p>
+                <h3 className="font-semibold text-gray-900">{r.employee_name || 'Employee'}</h3>
+                <p className="text-xs text-gray-500">{r.designation}{r.department_name ? ` · ${r.department_name}` : ''}</p>
+                <p className="text-xs text-gray-400 mt-1">{r.review_period}{r.review_date ? ` · ${r.review_date}` : ''}</p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-blue-600">{r.overall_rating}</div>
@@ -74,8 +79,9 @@ export default function Performance() {
               {isAdmin && <button onClick={() => { setEditReview(r); setShowModal(true); }} className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg"><Edit size={15} /></button>}
             </div>
 
-            {r.strengths && <p className="text-xs text-green-700 bg-green-50 rounded-lg px-3 py-2 mt-3">💪 {r.strengths}</p>}
-            {r.goals && <p className="text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2 mt-2">🎯 {r.goals}</p>}
+            {r.strengths && <p className="text-xs text-green-700 bg-green-50 rounded-lg px-3 py-2 mt-3"><span className="font-semibold">💪 Strengths:</span> {r.strengths}</p>}
+            {r.weaknesses && <p className="text-xs text-amber-800 bg-amber-50 rounded-lg px-3 py-2 mt-2"><span className="font-semibold">📈 Areas for Growth:</span> {r.weaknesses}</p>}
+            {r.goals && <p className="text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2 mt-2"><span className="font-semibold">🎯 Goals:</span> {r.goals}</p>}
           </div>
         ))}
       </div>
@@ -86,7 +92,7 @@ export default function Performance() {
 }
 
 function ReviewModal({ onClose, onSaved, review, employees }) {
-  const [form, setForm] = useState(review || { employee_id:'', review_period:'Q4 2025', review_date: new Date().toISOString().split('T')[0], overall_rating: 4, technical_skills: 4, communication: 4, teamwork: 4, leadership: 4, punctuality: 4, initiative: 4, strengths:'', weaknesses:'', goals:'', comments:'', status:'draft' });
+  const [form, setForm] = useState(review || { employee_id:'', review_period:'Q1 2026', review_date: new Date().toISOString().split('T')[0], overall_rating: 4, technical_skills: 4, communication: 4, teamwork: 4, leadership: 4, punctuality: 4, initiative: 4, strengths:'', weaknesses:'', goals:'', comments:'', status:'published' });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {

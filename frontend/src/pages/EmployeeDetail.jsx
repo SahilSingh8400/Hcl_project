@@ -335,7 +335,7 @@ export default function EmployeeDetail() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-gray-800">{pr.review_period}</h3>
-                  <p className="text-sm text-gray-500">Reviewed by {pr.reviewer_name} on {pr.review_date}</p>
+                  <p className="text-sm text-gray-500">{pr.review_date ? `Evaluation Date: ${pr.review_date}` : 'Annual Assessment'}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-blue-600">{pr.overall_rating}</div>

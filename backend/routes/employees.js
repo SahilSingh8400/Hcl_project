@@ -170,7 +170,7 @@ router.get('/:id/performance', authenticate, async (req, res) => {
                 (await db.employees.findOne({ employee_code: req.params.id }));
     if (!emp) return res.status(404).json({ error: 'Employee not found' });
 
-    let reviews = await db.performance.find({ employee_id: emp._id });
+    let reviews = await db.performance.find({ employee_id: emp._id }).sort({ review_date: -1, created_at: -1 });
     if (reviews.length === 0) {
       const score = emp.performance_score || 3.5;
       reviews = [{
@@ -188,8 +188,7 @@ router.get('/:id/performance', authenticate, async (req, res) => {
         strengths: `Consistently displays strong domain competencies aligned with grade ${emp.grade || 'L2'}.`,
         weaknesses: 'Can take on higher cross-functional ownership across departments.',
         goals: `Advance leadership roadmap and target next grade promotion.`,
-        status: 'published',
-        reviewer_name: 'Department Head'
+        status: 'published'
       }];
     }
     res.json(reviews);
